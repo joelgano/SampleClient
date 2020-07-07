@@ -1,0 +1,365 @@
+<div class="componentWrapper flexAlignCenter flexJustifyCenter flexColumn">
+	<mat-toolbar>
+		<mat-form-field class="smallMarginTop formFieldSelectSmall">
+			<input
+				matInput
+				[matDatepicker]="picker"
+				placeholder="Date"
+				[(value)]="dateTimeService.SelectedDate"
+				[formControl]="DatePickerControl"
+				(dateChange)="homeworkService.DateChanged($event.value)"
+			/>
+			<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+			<mat-datepicker #picker></mat-datepicker>
+			<mat-error *ngIf="DatePickerControl.hasError('badDate')">Please provide a valid date</mat-error>
+		</mat-form-field>
+
+		<mat-form-field class="smallMarginTop formFieldSelectSmall">
+			<mat-select placeholder="Time Period" [(value)]="periodService.SelectedPeriod" (selectionChange)="homeworkService.ChangePeriod($event.value)">
+				<mat-option selected *ngIf="periodService.CurrentPeriods.length === 0" [value]="periodService.BlankPeriod">---No Periods Today---</mat-option>
+				<mat-option *ngIf="periodService.CurrentPeriods.length > 0" [value]="periodService.BlankPeriod">Please select a period</mat-option>
+				<mat-option *ngFor="let period of periodService.CurrentPeriods" [value]="period"> {{ periodService.FormatPeriodTextForSelect(period) }} </mat-option>
+			</mat-select>
+		</mat-form-field>
+
+		<mat-form-field class="smallMarginTop formFieldSelectSmall">
+				<mat-select placeholder="Lesson" [(value)]="homeworkService.SelectedLesson" required>
+					<mat-option
+						*ngFor="let lesson of eventService.CurrentEvent && eventService.CurrentEvent.lessons && eventService.CurrentEvent.lessons.length > 0 ? eventService.CurrentEvent.lessons : []"
+						[value]="lesson"
+					>
+						{{ lesson.name }}
+					</mat-option>
+				</mat-select>
+			</mat-form-field>
+	</mat-toolbar>
+
+	<div layout="row" class="componentContent flexRow fullParentWidth">
+		<div *ngIf="homeworkService.Loading" class="fullParentWidth fullParentHeight flexColumn flexAlignCenter flexJustifyCenter textAlignCenter"><mat-spinner></mat-spinner></div>
+
+		<ng-container *ngIf="!homeworkService.Loading">
+			<div *ngIf="eventService.CurrentEvent === undefined" class="fullParentWidth fullParentHeight flexColumn flexAlignCenter flexJustifyCenter textAlignCenter">
+				<div *ngIf="eventService.CurrentEvent === undefined" class="textAlignCenter">
+					There is no event at the chosen time.
+					<div class="smallMarginTop flexAlignCenter flexJustifyCenter">
+						<button mat-raised-button (click)="NavigateToTimetable()">
+							<span class="tinyMarginRight">Go To Timetable</span>
+							<mat-icon class="primary">calendar_today</mat-icon>
+						</button>
+					</div>
+
+					<div class="smallMarginTop flexAlignCenter flexJustifyCenter">
+						<button mat-raised-button (click)="NavigateToSchedule()">
+							<span class="tinyMarginRight">Go To Scheduling</span>
+							<mat-icon class="primary">timeline</mat-icon>
+						</button>
+					</div>
+				</div>
+			</div>
+
+			<div *ngIf="eventService.CurrentEvent !== undefined" class="fullParentHeight fullParentWidth flexRow">
+				<div *ngIf="homeworkService.Homeworks.length === 0 && periodService.SelectedPeriod !== periodService.BlankPeriod" class="componentContent flexAlignCenter flexJustifyCenter flexColumn">
+					<button mat-raised-button class="formButtonMedium buttonAddHomework" (click)="AddHomework()" color="primary"><span>Add Homework</span><mat-icon class="tinyMarginLeft">add_circle</mat-icon></button>
+				</div>
+				<mat-tab-group
+					animationDuration="0ms"
+					(swipeleft)="SwipeLeft()"
+					(swiperight)="SwipeRight()"
+					*ngIf="homeworkService.Homeworks.length > 0"
+					mat-align-tabs="center"
+					#homeworkTab
+					(selectedTabChange)="TabSelectionChanged($event)"
+					[selectedIndex]="homeworkService.SelectedHomeworkTabIndex"
+					class="fullParentHeight fullParentWidth smallMarginRight maxParentHeight"
+				>
+					<ng-container *ngFor="let homework of homeworkService.Homeworks">
+						<mat-tab>
+							<ng-template mat-tab-label>
+								<button *ngIf="homework.title === '' && !homeworkService.isAddHomework" class="closeTabButton" color="primary" mat-icon-button><mat-icon class="primary">add_circle</mat-icon></button>
+								<a [class.primary]="homework.title === '' && !homeworkService.isAddHomework">
+									{{ homework.title === '' ? (!homeworkService.isAddHomework ? 'Add Homework' : 'New (unnamed)') : homework.title }}
+								</a>
+								<label class="unsave-homework" [style.visibility]="!homeworkService.isAddHomework ? 'hidden' : 'block'">.</label>
+								<button
+									class="closeTabButton"
+									color="warn"
+									mat-icon-button
+									(click)="!cancel ? OpenConfirmationDialog(homework.homeworkId, homework.title) : homeworkService.CancelHomework()"
+									[style.visibility]="homeworkService.EditMode && !(homework.title === '' && !homeworkService.isAddHomework) ? 'visible' : 'hidden'"
+								>
+									<mat-icon class="tabIcon">close</mat-icon>
+								</button>
+							</ng-template>
+							<div
+								*ngIf="!(homework.title === '' && !homeworkService.isAddHomework)"
+								class="componentWrapper flexAlignCenter flexJustifyCenter flexColumn ninetyNinePercentParentWidth maxFullParentHeight"
+							>
+								<div class="scrollableItem fullParentWidth smallMarginBottom">
+									<div class="rowContent matCard">
+										<div class="tableCell">
+											<button
+												class="formButtonMedium setButton right"
+												[class.fontSizeMedium]="screenService.ScreenWidth <= MinWidthShowTools"
+												mat-raised-button
+												(click)="AssignHomework(homework)"
+											>
+												{{ homeworkService.StatusText }}
+											</button>
+										</div>
+										<mat-card class="matcardTitle">
+											<mat-form-field class="matformfieldTitle">
+												<input matInput placeholder="Title" [(ngModel)]="homework.title" required autofocus [disabled]="!homeworkService.EditMode" />
+												<mat-error *ngIf="homework.title.length === 0">Please provide a title</mat-error>
+											</mat-form-field>
+											<mat-form-field appearance="outline" class="matformfieldDescription">
+												<mat-label>Homework</mat-label>
+												<textarea matInput rows="6" [(ngModel)]="homework.description" [disabled]="!homeworkService.EditMode"></textarea>
+											</mat-form-field>
+										</mat-card>
+									</div>
+
+									<div class="rowContent">
+										<mat-card class="matCardResources"
+											>Resources
+											<div class="no-resource flexColumn flexAlignCenter flexJustifyCenter">No resource found for this homework.</div>
+
+											<div class="divAddResource">
+												<button
+													class="formButtonMedium buttonAddResource"
+													mat-raised-button
+													*ngIf="homeworkService.addHomework"
+													(click)="AddResourceFiles($event.target.files)"
+													color="primary"
+												>
+													<span>Add Resource</span>
+													<mat-icon class="tinyMarginLeft">add_circle</mat-icon>
+												</button>
+											</div>
+
+											<div class="checkSelectAll" *ngIf="homeworkService.showSelectAll">
+												<mat-checkbox class="checkResource" [(ngModel)]="selectAll" (change)="SelectAllResources()">Select All </mat-checkbox>
+											</div>
+
+											<div class="resources">
+												{{ GetResourceForHomework(homework.homeworkId) }}
+												<mat-divider [inset]="true" class="matDivider" *ngIf="homeworkService.showSelectAll"></mat-divider>
+												<mat-grid-list [cols]="breakpoint" rowHeight="3:1.5" (window:resize)="OnScreenResize()">
+													<mat-grid-tile *ngFor="let resource of homework.resources">
+														<div
+															matTooltip="{{ resource.url.substring(0, resource.url.indexOf(':')) === 'https' ? resource.url : resource.url.split('/').pop() }}"
+															[matTooltipPosition]="position.value"
+														>
+															<div>
+																<mat-checkbox class="checkResource" [(ngModel)]="resource.check" (change)="SelectResource(resource.check, resource.resourceId, homework.homeworkId)">
+																</mat-checkbox>
+																<mat-icon class="imgResource">{{ GetResourceTypeIcon(resource.url) }} </mat-icon>
+															</div>
+															<div>
+																<label class="resourceTitle"
+																	>{{ resource.url.substring(0, resource.url.indexOf(':')) === 'https' ? resource.url : resource.url.split('/').pop() }}
+																</label>
+															</div>
+														</div>
+													</mat-grid-tile>
+												</mat-grid-list>
+											</div>
+										</mat-card>
+									</div>
+
+									<div class="rowContent">
+										<div class="columnContent matCard">
+											<div class="tableCell matCardSetLesson" [ngClass]="screenService.ScreenWidth > MinWidthShowTools ? 'browserWidth' : 'mobileWidth'">
+												<mat-card>
+													<mat-checkbox [(ngModel)]="homeworkService.setOnLessonDate" [disabled]="!homeworkService.EditMode" [checked]="CheckLessonDateTime(homework)"
+														>Set on Lesson Date</mat-checkbox
+													>
+													<div class="lessonDateCalendar">
+														<div class="tableCell calendarPicker">
+															<mat-form-field>
+																<input
+																	matInput
+																	[matDatepicker]="calendarLesson"
+																	placeholder="Date"
+																	[disabled]="!homeworkService.EditMode || homeworkService.setOnLessonDate"
+																	[ngModel]="homework.setDateTime"
+																	(ngModelChange)="ChangeSetDate($event, homework)"
+																	required
+																/>
+																<mat-datepicker-toggle matSuffix [for]="calendarLesson"></mat-datepicker-toggle>
+																<mat-datepicker #calendarLesson></mat-datepicker>
+															</mat-form-field>
+														</div>
+														<div class="tableCell timePicker">
+															<mat-form-field class="hourMin">
+																<mat-select
+																	placeholder="Hour"
+																	[ngModel]="homework.setDateTime | date: 'HH'"
+																	(selectionChange)="ChangeSetHour($event.value, homework)"
+																	[disabled]="!homeworkService.EditMode || homeworkService.setOnLessonDate"
+																	required
+																>
+																	<mat-option *ngFor="let hour of hours" [value]="hour"> {{ hour }} </mat-option>
+																</mat-select>
+															</mat-form-field>
+														</div>
+														<div class="timeSeparator">:</div>
+														<div class="tableCell timePicker">
+															<mat-form-field class="hourMin">
+																<mat-select
+																	placeholder="Minute"
+																	[ngModel]="homework.setDateTime | date: 'mm'"
+																	(selectionChange)="ChangeSetMin($event.value, homework)"
+																	[disabled]="!homeworkService.EditMode || homeworkService.setOnLessonDate"
+																	required
+																>
+																	<mat-option *ngFor="let minute of minutes" [value]="minute"> {{ minute }} </mat-option>
+																</mat-select>
+															</mat-form-field>
+														</div>
+													</div>
+												</mat-card>
+											</div>
+											<div class="tableCell matCardDueDate" [ngClass]="screenService.ScreenWidth > MinWidthShowTools ? 'browserWidth' : 'mobileWidth'">
+												<mat-card
+													>Due Date
+													<div class="divRadioGroup" [style.visibility]="homeworkService.EditMode ? 'visible' : 'hidden'">
+														<mat-radio-group>
+															<mat-radio-button value="lesson" (change)="SelectDueDate($event)" [checked]="homeworkService.isSelectVisible">Lesson</mat-radio-button>
+															<mat-radio-button value="date" (change)="SelectDueDate($event)" [checked]="homeworkService.isCalendarVisible">Date</mat-radio-button>
+														</mat-radio-group>
+													</div>
+													<div class="selectDueDate" *ngIf="homeworkService.isSelectVisible === true && homeworkService.EditMode">
+														<mat-form-field>
+															<mat-select placeholder="Date" [(ngModel)]="homework.dueDateTime" [disabled]="!homeworkService.EditMode">
+																<mat-option *ngFor="let date of homeworkService.UpcomingEventDates" [value]="date"
+																	>{{ dateHelper.FormatDateToDDMMYYYY(date) }} - {{ dateHelper.FormatDateToHHSS(date) }}
+																</mat-option>
+															</mat-select>
+														</mat-form-field>
+													</div>
+													<div class="dueDateCalendar" *ngIf="homeworkService.isCalendarVisible === true || !homeworkService.EditMode">
+														<div class="tableCell calendarPicker">
+															<mat-form-field>
+																<input
+																	matInput
+																	[matDatepicker]="calendarDueDate"
+																	placeholder="Date Due"
+																	[ngModel]="homework.dueDateTime"
+																	(ngModelChange)="ChangeDueDate($event, homework)"
+																	[disabled]="!homeworkService.EditMode"
+																	required
+																/>
+																<mat-datepicker-toggle matSuffix [for]="calendarDueDate"></mat-datepicker-toggle>
+																<mat-datepicker #calendarDueDate></mat-datepicker>
+															</mat-form-field>
+														</div>
+														<div class="tableCell timePicker">
+															<mat-form-field class="hourMin">
+																<mat-select
+																	placeholder="Hour"
+																	[ngModel]="homework.dueDateTime | date: 'HH'"
+																	(selectionChange)="ChangeDueMin($event.value, homework)"
+																	[disabled]="!homeworkService.EditMode"
+																	required
+																>
+																	<mat-option *ngFor="let hour of hours" [value]="hour"> {{ hour }} </mat-option>
+																</mat-select>
+															</mat-form-field>
+														</div>
+														<div class="timeSeparator">:</div>
+														<div class="tableCell timePicker">
+															<mat-form-field class="hourMin">
+																<mat-select
+																	placeholder="Minute"
+																	[ngModel]="homework.dueDateTime | date: 'mm'"
+																	(selectionChange)="ChangeDueMin($event.value, homework)"
+																	[disabled]="!homeworkService.EditMode"
+																	required
+																>
+																	<mat-option *ngFor="let minute of minutes" [value]="minute"> {{ minute }} </mat-option>
+																</mat-select>
+															</mat-form-field>
+														</div>
+													</div>
+												</mat-card>
+											</div>
+										</div>
+
+										<div class="fullParentWidth flexAlignCenter flexJustifyCenter">
+											<!-- <div class="fullParentWidth"> -->
+
+											<button
+												class="formButtonMedium setButton"
+												[class.fontSizeMedium]="screenService.ScreenWidth <= MinWidthShowTools"
+												mat-raised-button
+												(click)="OpenHomeworkAssignDialog(homework)"
+												*ngIf="homeworkService.addHomework"
+												color="primary"
+											>
+												Select students
+											</button>
+											<button
+												class="formButtonMedium setButton"
+												[class.fontSizeMedium]="screenService.ScreenWidth <= MinWidthShowTools"
+												mat-raised-button
+												(click)="SetForAll(homework)"
+												*ngIf="homeworkService.addHomework"
+												color="primary"
+											>
+												Set for all
+											</button>
+											<button
+												class="formButtonMedium setButton"
+												[class.fontSizeMedium]="screenService.ScreenWidth <= MinWidthShowTools"
+												mat-raised-button
+												*ngIf="homeworkService.cancel || homeworkService.EditMode"
+												(click)="homeworkService.CancelHomework()"
+												[color]="'warn'"
+											>
+												Cancel
+											</button>
+											<!-- </div> -->
+										</div>
+									</div>
+								</div>
+							</div>
+						</mat-tab>
+					</ng-container>
+				</mat-tab-group>
+			</div>
+		</ng-container>
+
+		<ng-container *ngIf="settingService.menuContextHomeworkShowPastHomework">
+			<div *ngIf="screenService.ScreenWidth > MinWidthShowTools" class="fullParentHeight minHalfParentWidth"><app-homework-list></app-homework-list></div>
+		</ng-container>
+	</div>
+</div>
+
+<div
+	*ngIf="contextMenuService.DisplayContextMenu()"
+	class="contextMenuButton"
+	cdkDrag
+	(cdkDragStarted)="contextMenuService.DragContextMenuStart()"
+	(cdkDragEnded)="contextMenuService.DragContextMenuEnd($event)"
+	[style.bottom.%]="contextMenuService.MenuPositionBottom"
+	[style.right.%]="contextMenuService.MenuPositionRight"
+>
+	<button *ngIf="!this.contextMenuService.Dragging" #menuTrigger="matMenuTrigger" mat-fab color="accent" [matMenuTriggerFor]="contextMenu">Menu</button>
+	<button *ngIf="this.contextMenuService.Dragging" mat-fab color="accent">Menu</button>
+</div>
+
+<mat-menu #contextMenu="matMenu">
+	<button *ngIf="!homeworkService.EditMode" mat-menu-item (click)="ToggleEditMode()"><mat-icon>edit</mat-icon><span>Edit Mode</span></button>
+	<button *ngIf="homeworkService.EditMode" mat-menu-item (click)="ToggleEditMode()"><mat-icon>edit</mat-icon><span>Exit Edit Mode</span></button>
+	<button *ngIf="homeworkService.EditMode" mat-menu-item (click)="SaveAndExit()"><mat-icon>save</mat-icon><span>Save and Exit Edit Mode</span></button>
+	<button mat-menu-item [matMenuTriggerFor]="settingsMenu"><mat-icon>settings</mat-icon><span>Settings</span></button>
+</mat-menu>
+
+<mat-menu #settingsMenu="matMenu">
+	<div (click)="$event.stopPropagation()">
+		<button mat-menu-item (click)="TogglePastHomework()">
+			<mat-checkbox [(ngModel)]="settingService.menuContextHomeworkShowPastHomework"></mat-checkbox>
+			<span>Show Past Homework</span>
+		</button>
+	</div>
+</mat-menu>

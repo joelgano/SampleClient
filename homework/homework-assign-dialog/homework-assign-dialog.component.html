@@ -1,0 +1,48 @@
+<div class="componentContext flexAlignCenter flexJustifyCenter flexColumn">
+	<div class="title"><h1 mat-dialog-title>Assign Student</h1></div>
+
+	<div mat-dialog-content class="fullParentWidth">
+		<mat-table class="fullParentWidth" [dataSource]="homeworkService.StudentHomeworkSelectionDataSource" matSort (matSortChange)="homeworkService.StudentHomeworkSelectionSortData($event)">
+			<ng-container matColumnDef="set">
+				<mat-header-cell *matHeaderCellDef class="flexBasis15 flexAlignCenter flexJustifyCenter">
+					<mat-checkbox
+						(change)="$event ? homeworkService.StudentHomeworkSelectionMasterToggle() : null"
+						[checked]="homeworkService.StudentHomeworkSelection.hasValue() && homeworkService.StudentHomeworkSelectionIsAllSelected()"
+						[indeterminate]="homeworkService.StudentHomeworkSelection.hasValue() && !homeworkService.StudentHomeworkSelectionIsAllSelected()"
+					>
+					</mat-checkbox>
+				</mat-header-cell>
+				<mat-cell *matCellDef="let row" class="flexBasis15 flexAlignCenter flexJustifyCenter">
+					<mat-checkbox
+						(click)="$event.stopPropagation()"
+						(change)="$event ? homeworkService.StudentHomeworkSelection.toggle(row) : null"
+						[checked]="homeworkService.StudentHomeworkSelection.isSelected(row)"
+					>
+					</mat-checkbox>
+				</mat-cell>
+			</ng-container>
+
+			<ng-container matColumnDef="forename">
+				<mat-header-cell mat-sort-header *matHeaderCellDef class="flexBasis20 flexAlignCenter flexJustifyStart"> Forename </mat-header-cell>
+				<mat-cell *matCellDef="let element" class="flexBasis20 flexAlignCenter flexJustifyStart textAlignLeft"> {{ element.forename }} </mat-cell>
+			</ng-container>
+
+			<ng-container matColumnDef="surname">
+				<mat-header-cell mat-sort-header *matHeaderCellDef class="flexBasis20 flexAlignCenter flexJustifyStart"> Surname </mat-header-cell>
+				<mat-cell *matCellDef="let element" class="flexBasis20 flexAlignCenter flexJustifyStart textAlignLeft"> {{ element.surname }} </mat-cell>
+			</ng-container>
+
+			<ng-container matColumnDef="class">
+				<mat-header-cell mat-sort-header *matHeaderCellDef class="flexBasis20 flexAlignCenter flexJustifyStart"> Class </mat-header-cell>
+				<mat-cell *matCellDef="let element" class="flexBasis20 flexAlignCenter flexJustifyStart textAlignLeft"> {{ element.class }} </mat-cell>
+			</ng-container>
+
+			<mat-header-row class="fullParentWidth" *matHeaderRowDef="homeworkService.StudentHomeworkSelectionDisplayedColumns; sticky: true"></mat-header-row>
+			<mat-row class="fullParentWidth" *matRowDef="let row; columns: homeworkService.StudentHomeworkSelectionDisplayedColumns"></mat-row>
+		</mat-table>
+	</div>
+
+	<div mat-dialog-actions>
+		<button mat-raised-button mat-dialog-close color="primary" (click)="AssignHomework()">Save</button> <button mat-raised-button mat-dialog-close cdkFocusInitial color="warn">Cancel</button>
+	</div>
+</div>

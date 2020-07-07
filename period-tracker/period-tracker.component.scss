@@ -1,0 +1,42 @@
+@import '../../styles/style.variables.scss';
+
+.buttonPeriod {
+    font-size: 90% !important;
+    color: white;
+    margin-left: 8px;
+
+    @media screen and (max-width: 600px) {
+        font-size: 80%;
+        color: white;
+        margin-left: 4px;
+        width: 35px;
+        height: 35px;
+    }
+}
+
+.presentPeriod {
+    background-color: $grey;
+}
+  
+.active {
+    background-color: $accent;
+    font-weight: bold;
+}
+  
+.inactive {
+    background-color: $darkGrey;
+}
+
+.selectedPeriod {
+    border-style: solid;
+    border-color: $accent;
+}
+
+.selectedActivePeriod {
+    border-style: solid;
+    border-color: $warning;
+}
+
+.unselectedPeriod {
+    border-style: none;
+}

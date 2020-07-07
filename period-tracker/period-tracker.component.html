@@ -1,0 +1,22 @@
+<div class="flexRow">
+	<div class="flexAlignCenter flexJustifyCenter" *ngFor="let period of periodService.PeriodsForToday; let i = index">
+		<span *ngIf="!(screenService.ScreenWidth < MinWidthShowBreaks && (period.periodName === 'Break' || period.periodName === 'Registration'))" [class]="GetPeriodColors(period)">
+			<button
+				mat-mini-fab
+				class="buttonPeriod"
+				[class.presentPeriod]="presentPeriod"
+				[class.active]="activePeriod"
+				[class.inactive]="inactivePeriod"
+				[class.selectedPeriod]="selectedPeriod"
+				[class.selectedActivePeriod]="selectedActivePeriod"
+				[class.unselectedPeriod]="unselectedPeriod"
+				matTooltip="Start: {{ period.startDateTime | date: 'HH:mm' }} &nbsp;&nbsp; End: {{ period.endDateTime | date: 'HH:mm' }}"
+				[matTooltipPosition]="position.value"
+				(click)="OnClickPeriod(period)"
+			>
+				<span *ngIf="period.periodName !== 'Break' && period.periodName !== 'Registration'">P{{ period.periodName.slice(-1) }}</span> <span *ngIf="period.periodName == 'Registration'">R</span>
+				<span *ngIf="period.periodName == 'Break'">B</span>
+			</button>
+		</span>
+	</div>
+</div>

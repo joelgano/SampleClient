@@ -1,0 +1,30 @@
+<div class="componentWrapper flexAlignCenter flexJustifyCenter flexColumn">
+  <div class="title">
+    <h1 mat-dialog-title>{{ data.title }}</h1>
+  </div>
+
+  <div mat-dialog-content class="message">
+    <span>{{ data.message }}</span>
+  </div>
+
+  <div class="templateList">
+    <mat-chip-list>
+      <mat-chip *ngFor="let template of data.templateList; let i=index;" (click)="SelectChip(template.homeworkTemplateId)">{{ template.title }}</mat-chip>
+    </mat-chip-list>        
+  </div>
+
+  <div mat-dialog-actions>
+    <button
+      mat-raised-button
+      mat-dialog-close
+      color="primary"
+      (click)="OnConfirm()"
+    >
+      Yes
+    </button>
+    <button mat-raised-button mat-dialog-close cdkFocusInitial color="warn">
+      No
+    </button>
+  </div>
+</div>
+  

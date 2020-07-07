@@ -1,0 +1,23 @@
+<div class="componentWrapper flexColumn flexAlignCenter">
+    <div class="logo logoFlytdex"></div>
+    <form class="flexColumn flexAlignCenter" (submit)="Login()">
+        <mat-form-field class="mat-form-field formFieldMedium">
+            <input matInput placeholder="Username" [formControl]="UsernameFormControl">
+
+            <mat-error *ngIf="UsernameFormControl.hasError('required')">Username is Required</mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="mat-form-field formFieldMedium">
+            <input type="password" matInput placeholder="Password" [formControl]="PasswordFormControl">
+
+            <mat-error *ngIf="PasswordFormControl.hasError('required')">Password is Required</mat-error>
+            <mat-error *ngIf="PasswordFormControl.hasError('minlength')">Password must be at least 8 chars</mat-error>
+        </mat-form-field>
+
+        <button mat-raised-button class="formButtonMedium" color="primary" [disabled]="LoggingIn">Login</button>
+
+        <div class="smallMarginTop twentyPercentScreenWidth" *ngIf="LoggingIn">
+            <mat-progress-bar mode="query"></mat-progress-bar>
+        </div>
+    </form>
+</div>

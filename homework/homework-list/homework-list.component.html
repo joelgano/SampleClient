@@ -1,0 +1,74 @@
+<div class="componentWrapper flexAlignCenter flexJustifyCenter flexColumn ninetyFivePercentParentWidth maxFullParentHeight">
+    <div class="fullParentWidth scrollableItem">
+        <div class="ninetyNinePercentParentWidth onePercentMarginRight">
+            <mat-accordion [multi]="true">
+
+                <mat-expansion-panel [expanded]="true">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            Past Homeworks
+                        </mat-panel-title>
+                        <mat-panel-description>
+                            <!-- Left blank for now -->
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+                    <mat-divider></mat-divider>
+                    <div class="fullParentWidth flexAlignCenter flexJustifyCenter flexColumn mat-elevation-z8">
+                        <mat-table class="fullParentWidth" matSortActive="setDateTime" matSortDirection="asc" [dataSource]="homeworkService.dataSource" matSort
+                            (matSortChange)="homeworkService.SortData($event)">
+
+                            <ng-container matColumnDef="lessonName">
+                                <mat-header-cell mat-sort-header *matHeaderCellDef class="flexBasis50 flexAlignCenter flexJustifyStart">
+                                    Lesson Title
+                                </mat-header-cell>
+                                <mat-cell *matCellDef="let element" class="flexBasis50 flexAlignCenter flexJustifyStart textAlignLeft">
+                                    {{element.lessonName}}
+                                </mat-cell>
+                            </ng-container>
+
+                            <ng-container matColumnDef="title">
+                                <mat-header-cell mat-sort-header *matHeaderCellDef class="flexBasis50 flexAlignCenter flexJustifyStart">
+                                    Title
+                                </mat-header-cell>
+                                <mat-cell *matCellDef="let element" class="flexBasis50 flexAlignCenter flexJustifyStart textAlignLeft">
+                                    {{element.title}}
+                                </mat-cell>
+                            </ng-container>
+
+                            <ng-container matColumnDef="description">
+                                <mat-header-cell mat-sort-header *matHeaderCellDef class="flexBasis50 flexAlignCenter flexJustifyStart">
+                                    Description
+                                </mat-header-cell>
+                                <mat-cell *matCellDef="let element" class="flexBasis50 flexAlignCenter flexJustifyStart textAlignLeft">
+                                    {{element.description}}
+                                </mat-cell>
+                            </ng-container>
+
+                            <ng-container matColumnDef="setDateTime">
+                                <mat-header-cell mat-sort-header *matHeaderCellDef class="flexBasis50 flexAlignCenter flexJustifyStart">
+                                    Set Date
+                                </mat-header-cell>
+                                <mat-cell *matCellDef="let element" class="flexBasis50 flexAlignCenter flexJustifyStart textAlignLeft">
+                                    {{ dateHelper.FormatDateToDDMMYYYY(element.setDateTime) }}
+                                </mat-cell>
+                            </ng-container>
+
+                            <ng-container matColumnDef="dueDateTime">
+                                <mat-header-cell mat-sort-header *matHeaderCellDef class="flexBasis50 flexAlignCenter flexJustifyStart">
+                                    Due Date
+                                </mat-header-cell>
+                                <mat-cell *matCellDef="let element" class="flexBasis50 flexAlignCenter flexJustifyStart textAlignLeft">
+                                    {{ dateHelper.FormatDateToDDMMYYYY(element.dueDateTime) }}
+                                </mat-cell>
+                            </ng-container>
+
+                            <mat-header-row class="fullParentWidth" *matHeaderRowDef="homeworkService.displayedColumns; sticky: true"></mat-header-row>
+                            <mat-row class="fullParentWidth" [ngClass]="{'matTableActive': homeworkService.IsSelectedPastHomework(row)}"
+                                (click)="homeworkService.SelectPastHomework(row)" *matRowDef="let row; columns: homeworkService.displayedColumns;"></mat-row>
+                        </mat-table>
+                    </div>
+                </mat-expansion-panel>
+            </mat-accordion>
+        </div>
+    </div>
+</div>

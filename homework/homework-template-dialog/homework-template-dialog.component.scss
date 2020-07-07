@@ -1,0 +1,26 @@
+@import "../../../styles/style.variables.scss";
+
+.message {
+  width: 100%;
+  overflow: hidden;
+  padding-bottom: 2vh;
+}
+
+.title {
+  width: 100%;
+  float: left;
+}
+
+button {
+  width: 13vh;
+  margin-top: 1vh;
+}
+
+.buttonNo {
+  background-color: $primary;
+  color: white;
+}
+
+.templateList {
+  padding: 10px 0;
+}

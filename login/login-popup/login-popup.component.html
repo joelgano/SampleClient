@@ -1,0 +1,50 @@
+<div class="componentWrapper flexAlignCenter flexJustifyCenter flexColumn">
+	<div class="title">
+		<h1 mat-dialog-title>{{ data.title }}</h1>
+	</div>
+
+	<div mat-dialog-content class="message">
+		<span>{{ data.message }}</span>
+	</div>
+
+	<form class="flexColumn flexAlignCenter form-inline" (submit)="Save(data.userId)" autocomplete="off">
+		<mat-form-field class="mat-form-field formFieldMedium">
+			<input type="password" matInput placeholder="New Password" [formControl]="PasswordFormControl" required autocomplete="new-password" />
+
+			<mat-error *ngIf="PasswordFormControl.hasError('required')">Required</mat-error>
+			<mat-error *ngIf="PasswordFormControl.hasError('minlength')">New Password must be at least 8 chars</mat-error>
+		</mat-form-field>
+
+		<mat-form-field class="mat-form-field formFieldMedium">
+			<input type="password" matInput placeholder="Confirm Password" [formControl]="ConfirmPasswordFormControl" required autocomplete="confirm-password" />
+
+			<mat-error *ngIf="ConfirmPasswordFormControl.hasError('required')">Required</mat-error>
+			<mat-error *ngIf="!ConfirmPasswordFormControl.hasError('required') && ConfirmPasswordFormControl.hasError('samevalue')">New Password and Confirm Password must be the same</mat-error>
+		</mat-form-field>
+
+		<mat-form-field class="mat-form-field formFieldMedium">
+			<input matInput type="text" placeholder="Email" [formControl]="EmailFormControl" required autocomplete="off" />
+
+			<mat-error *ngIf="EmailFormControl.hasError('required')">Required</mat-error>
+			<mat-error *ngIf="EmailFormControl.hasError('email')">Invalid email format</mat-error>
+		</mat-form-field>
+
+		<div class="form-group formFieldMedium">
+			<mat-form-field class="mat-form-field select-countryCode">
+				<mat-select placeholder="Country Code" [(ngModel)]="countryCode.code" name="codeSelect" [(value)]="countryCode.code" required>
+					<mat-option>{{ countryCode.code }}</mat-option>
+					<mat-option *ngFor="let countryCode of countryCodeHelper.CountryCodeList" [value]="countryCode.code"> {{ countryCode.isoCode }} &nbsp;&nbsp;+{{ countryCode.code }} </mat-option>
+				</mat-select>
+			</mat-form-field>
+
+			<mat-form-field class="mat-form-field input-phone">
+				<input matInput type="tel" placeholder="Phone number" [formControl]="PhoneFormControl" required autocomplete="off" />
+
+				<mat-error *ngIf="PhoneFormControl.hasError('required')">Required</mat-error>
+				<mat-error *ngIf="PhoneFormControl.hasError('minlength')">Phone number must be at least 5 chars</mat-error>
+			</mat-form-field>
+		</div>
+
+		<button mat-raised-button class="formButtonMedium" color="primary" [disabled]="!validFormControls">Save</button>
+	</form>
+</div>

@@ -1,0 +1,238 @@
+@import "../../styles/style.variables.scss";
+
+.homeContainer {
+    display: table;
+    width: 100%;
+}
+
+.rowContent {
+    display: table-row;
+    margin: 1% 10%;
+    display: flex;
+    flex-direction: column;
+}
+
+.columnContent {
+    display: table-column;
+}
+
+.tableCell {
+    display: table-cell;
+}
+
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
+}
+
+.matcardTitle {
+    padding: 3vh 3vh 0 3vh !important;
+}
+
+.matformfieldTitle {
+    width: 100%;
+    padding-bottom: 3vh
+}
+
+.matformfieldDescription {
+    width: 100%;
+}
+
+.setButton {
+    width: 90%;
+    margin-left: 1% !important;
+    margin-right: 1% !important;
+    // margin-left: 1% !important;
+    padding-left: 1% !important;
+    padding-right: 1% !important;
+}
+
+.matCard {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.matCardSetLesson {
+    display: inline-block;
+    position: relative;
+    height: 100%;
+}
+
+.matCardDueDate {
+    position: relative;
+    height: 100%;
+    float: right;
+}
+
+.browserWidth {
+    width: 48%;
+}
+
+.mobileWidth {
+    width: 100%;
+    margin: 5px 0;
+}
+
+.dueDatePicker {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.lessonDateCalendar {
+    margin-top: 19px;
+    display: flex;
+    flex-direction: row;
+    padding-bottom: 0px;
+    padding-top: 28px;
+}
+
+.dueDateCalendar {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+}
+
+.calendarPicker {
+    padding-top: 1px;
+    width: 45%;
+    margin-right: 4%;
+    display: flex;
+    flex-direction: column;
+}
+
+.timePicker {
+    width: 20%;
+    margin-left: 4%;
+    display: flex;
+    flex-direction: column;
+}
+
+.selectDueDate {
+    padding-top: 20.5px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.matCardResources {
+    padding: 25px 20px !important;
+}
+
+.resources {
+    margin: 30px 30px;
+    float: center;
+}
+
+.imgResource {
+    display: block;
+    margin: 0 auto;
+    padding-left: 5px;
+    width: 35%;
+    height: 35%;
+    padding-bottom: 10px;
+}
+
+.resourceTitle {
+    text-align: center;
+    display: block;
+    margin: 0 auto;
+    width: 130px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.checkResource {
+    position: absolute;
+}
+
+.checkSelectAll {
+    padding: 0 30px;
+    padding-top: 20px;
+}
+
+.inputTime {
+    padding: 0 3px;
+}
+
+.matDivider {
+    padding-bottom: 10px
+}
+
+.closeTabButton {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.divAddResource {
+    position: relative;
+    padding-bottom: 30px;
+}
+
+.buttonAddResource {
+    position: absolute;
+    right: 0;
+    width: 20vh;
+}
+
+.divRadioGroup {
+    padding-top: 15px;
+}
+
+mat-radio-button {
+    width: 50%;
+}
+
+.timeSeparator {
+    margin-top: 24px;
+    margin-left: 1.5vh
+}
+
+.hourMin {
+    width: 100%
+}
+
+.buttonAddHomework {
+    min-width: 150px;
+}
+
+.filterField {
+    width: 40%;
+    min-width: 200px;
+    max-width: 350px;
+    margin-right: 20px;
+}
+
+.mat-tab-group-homework {
+    overflow-y: scroll;
+}
+
+.no-resource {
+    padding-top: 2vh;
+}
+
+.toolbar-calendar {
+    padding-top: 2vh;
+}
+
+.toolbar-period {
+    padding-top: 1.5vh;
+}
+
+.unsave-homework {
+    font-size: 50px;
+    font-weight: bold;
+    color: $warning;
+    padding-bottom: 30px;
+    padding-left: 5px;
+}
+
+input[disabled],
+button[disabled],
+textarea[disabled] {
+    color: $disabledTextColor;
+}
